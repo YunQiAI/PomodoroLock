@@ -59,10 +59,6 @@ The menu bar icon provides quick access to:
 
 ![Work Time Interface](Assets/interface.png)
 
-### Break Time Interface
-
-![Break Time Interface](Assets/break_time_interface.png)
-
 ## How It Works
 
 PomodoroLock follows the Pomodoro Technique:
