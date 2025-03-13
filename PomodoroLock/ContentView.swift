@@ -1,6 +1,10 @@
 import SwiftUI
 import Combine
 import AppKit
+import AVFoundation
+
+// 创建一个全局单例PomodoroTimer
+let sharedPomodoroTimer = PomodoroTimer()
 
 class PomodoroTimer: ObservableObject {
     @Published var workDuration: Int = 15 * 60
@@ -8,11 +12,19 @@ class PomodoroTimer: ObservableObject {
     @Published var timeRemaining: Int = 15 * 60
     @Published var isRunning: Bool = false
     @Published var isBreakTime: Bool = false
-    @Published var showMenuBarTimer: Bool = true
+    @Published var showMenuBarTimer: Bool = true {
+        didSet {
+            if showMenuBarTimer != oldValue {
+                updateMenuBarVisibility()
+            }
+        }
+    }
+    @Published var autoEndBreak: Bool = false // 是否自动结束休息
 
     private var timer: Timer?
     private var breakWindow: NSWindow?
     private var statusItem: NSStatusItem?
+    private var audioPlayer: AVAudioPlayer?
 
     init() {
         setupBreakWindow()
@@ -20,9 +32,15 @@ class PomodoroTimer: ObservableObject {
     }
 
     func start() {
+        // 确保先停止任何可能正在运行的计时器
+        timer?.invalidate()
+        
         isRunning = true
         updateMenuBar()
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+        
+        // 使用RunLoop.main.add方法添加计时器，提高精度
+        let newTimer = Timer(timeInterval: 1.0, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
             if self.timeRemaining > 0 {
                 self.timeRemaining -= 1
                 self.updateMenuBar()
@@ -30,16 +48,20 @@ class PomodoroTimer: ObservableObject {
                 self.switchMode()
             }
         }
+        RunLoop.main.add(newTimer, forMode: .common)
+        timer = newTimer
     }
 
     func pause() {
         isRunning = false
         timer?.invalidate()
+        timer = nil
     }
 
     func stop() {
         isRunning = false
         timer?.invalidate()
+        timer = nil
         resetTimer()
         updateMenuBar()
     }
@@ -50,12 +72,41 @@ class PomodoroTimer: ObservableObject {
     }
 
     private func switchMode() {
+        // 确保先停止任何可能正在运行的计时器
+        timer?.invalidate()
+        timer = nil
+        
         isRunning = false
         isBreakTime.toggle()
         resetTimer()
+        
         if isBreakTime {
             startBreakTimer()
             showBreakWindow()
+        } else {
+            // 工作时间结束，播放提示音
+            playSound()
+        }
+    }
+    
+    // 播放提示音 - 滴滴滴滴声
+    private func playSound() {
+        // 播放两次系统提示音，模拟"滴滴，滴滴"的效果
+        NSSound.beep()
+        
+        // 延迟0.3秒后播放第二次提示音
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            NSSound.beep()
+        }
+        
+        // 再延迟0.6秒后播放第三次提示音
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+            NSSound.beep()
+        }
+        
+        // 最后延迟0.9秒后播放第四次提示音
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
+            NSSound.beep()
         }
     }
 
@@ -67,15 +118,31 @@ class PomodoroTimer: ObservableObject {
     }
 
     private func startBreakTimer() {
+        // 确保先停止任何可能正在运行的计时器
         timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+        
+        // 使用RunLoop.main.add方法添加计时器，提高精度
+        let newTimer = Timer(timeInterval: 1.0, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
             if self.timeRemaining > 0 {
                 self.timeRemaining -= 1
                 self.updateMenuBar()
             } else {
-                self.dismissBreakScreen()
+                // 只有在autoEndBreak为true时才自动结束休息
+                if self.autoEndBreak {
+                    self.dismissBreakScreen()
+                } else {
+                    // 否则只播放提示音，但保持休息界面
+                    self.playSound()
+                    // 停止计时器，防止重复播放提示音
+                    self.timer?.invalidate()
+                    // 更新菜单栏显示00:00
+                    self.updateMenuBar()
+                }
             }
         }
+        RunLoop.main.add(newTimer, forMode: .common)
+        timer = newTimer
     }
 
     private func setupBreakWindow() {
@@ -112,21 +179,124 @@ class PomodoroTimer: ObservableObject {
 
     func dismissBreakScreen() {
         DispatchQueue.main.async {
+            // 确保先停止任何可能正在运行的计时器
+            self.timer?.invalidate()
+            self.timer = nil
+            
             self.breakWindow?.orderOut(nil)
             self.isBreakTime = false
             self.resetTimer()
+            
+            // 注意：用户手动结束休息时不播放提示音
+        }
+    }
+    
+    // 结束休息并开始新的番茄工作周期
+    func endBreakAndStartNewPomodoro() {
+        DispatchQueue.main.async {
+            // 确保先停止任何可能正在运行的计时器
             self.timer?.invalidate()
+            self.timer = nil
+            
+            self.breakWindow?.orderOut(nil)
+            self.isBreakTime = false
+            self.resetTimer()
+            
+            // 注意：用户点击"继续番茄计时"时不播放提示音
+            
+            // 使用延迟确保前一个计时器完全停止
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self.start() // 立即开始新的番茄工作周期
+            }
         }
     }
 
     private func setupMenuBar() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+        updateMenuBarVisibility()
         updateMenuBar()
+        setupMenuBarMenu()
+    }
+    
+    // 根据showMenuBarTimer的值更新菜单栏图标的可见性
+    private func updateMenuBarVisibility() {
+        if showMenuBarTimer {
+            // 如果菜单栏图标不存在，创建它
+            if statusItem == nil {
+                statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+                updateMenuBar()
+                setupMenuBarMenu()
+            }
+        } else {
+            // 如果菜单栏图标存在，移除它
+            if let item = statusItem {
+                NSStatusBar.system.removeStatusItem(item)
+                statusItem = nil
+            }
+        }
     }
 
     private func updateMenuBar() {
         guard let statusItem = statusItem, showMenuBarTimer else { return }
         statusItem.button?.title = isBreakTime ? "☕ \(timeString(timeRemaining))" : "🍅 \(timeString(timeRemaining))"
+        setupMenuBarMenu() // 更新菜单状态
+    }
+    
+    private func setupMenuBarMenu() {
+        let menu = NSMenu()
+        
+        // 打开主界面
+        let openMainItem = NSMenuItem(title: "打开主界面", action: #selector(openMainWindow), keyEquivalent: "o")
+        openMainItem.target = self
+        menu.addItem(openMainItem)
+        
+        menu.addItem(NSMenuItem.separator())
+        
+        // 开始/暂停计时
+        let startStopItem = NSMenuItem(title: isRunning ? "暂停计时" : "开始计时",
+                                      action: #selector(toggleTimer),
+                                      keyEquivalent: "p")
+        startStopItem.target = self
+        menu.addItem(startStopItem)
+        
+        // 停止计时
+        let stopItem = NSMenuItem(title: "停止计时", action: #selector(stopTimerFromMenu), keyEquivalent: "s")
+        stopItem.target = self
+        menu.addItem(stopItem)
+        
+        menu.addItem(NSMenuItem.separator())
+        
+        // 退出应用
+        let quitItem = NSMenuItem(title: "退出", action: #selector(quitApp), keyEquivalent: "q")
+        quitItem.target = self
+        menu.addItem(quitItem)
+        
+        statusItem?.menu = menu
+    }
+    
+    @objc private func openMainWindow() {
+        // 使用全局AppDelegate引用来创建或显示主窗口
+        if let appDelegate = sharedAppDelegate {
+            appDelegate.createOrShowMainWindow()
+        } else {
+            // 如果无法获取AppDelegate，尝试使用旧方法
+            NSApp.activate(ignoringOtherApps: true)
+            NSApp.windows.first?.makeKeyAndOrderFront(nil)
+        }
+    }
+    
+    @objc private func toggleTimer() {
+        isRunning ? pause() : start()
+        setupMenuBarMenu() // 更新菜单状态
+    }
+    
+    @objc private func stopTimerFromMenu() {
+        stop()
+        setupMenuBarMenu() // 更新菜单状态
+    }
+    
+    @objc private func quitApp() {
+        NSApp.terminate(nil)
     }
 
     func timeString(_ seconds: Int) -> String {
@@ -141,7 +311,7 @@ struct BreakView: View {
 
     var body: some View {
         VStack {
-            Text("休息时间 ⏳")
+            Text(timer.timeRemaining > 0 ? "休息时间 ⏳" : "休息时间已结束 ✓")
                 .font(.largeTitle)
                 .foregroundColor(.white)
                 .padding()
@@ -149,21 +319,30 @@ struct BreakView: View {
             Text(timer.timeString(timer.timeRemaining))
                 .font(.system(size: 50, weight: .bold))
                 .monospacedDigit()
-                .foregroundColor(.white)
+                .foregroundColor(timer.timeRemaining > 0 ? .white : .green)
                 .padding()
 
             Button("结束休息") {
                 timer.dismissBreakScreen()
             }
             .buttonStyle(.borderedProminent)
+            .padding(.bottom, 5)
+            .foregroundColor(.white)
+            
+            Button("继续番茄计时") {
+                timer.endBreakAndStartNewPomodoro()
+            }
+            .buttonStyle(.bordered)
             .padding()
             .foregroundColor(.white)
+            .background(Color.blue.opacity(0.6))
+            .cornerRadius(8)
         }
     }
 }
 
 struct ContentView: View {
-    @StateObject private var pomodoro = PomodoroTimer()
+    @ObservedObject var pomodoro: PomodoroTimer = sharedPomodoroTimer
 
     var body: some View {
         VStack {
@@ -176,8 +355,13 @@ struct ContentView: View {
                 .monospacedDigit()
                 .padding()
             
-            Toggle("菜单栏倒计时", isOn: $pomodoro.showMenuBarTimer)
-                .padding()
+            VStack(alignment: .leading) {
+                Toggle("菜单栏显示", isOn: $pomodoro.showMenuBarTimer)
+                    .help("启用后在菜单栏显示图标；禁用则隐藏菜单栏图标")
+                Toggle("自动结束休息", isOn: $pomodoro.autoEndBreak)
+                    .help("启用后，休息时间结束会自动关闭休息界面；禁用则等待手动点击")
+            }
+            .padding()
 
             HStack {
                 Button(pomodoro.isRunning ? "暂停" : "开始") {
@@ -225,15 +409,69 @@ struct ContentView: View {
             .buttonStyle(.bordered)
             .padding()
         }
-        .frame(width: 300, height: 400)
+        .frame(width: 400, height: 500)
+        .padding()
+    }
+}
+
+// 全局AppDelegate引用，方便从其他地方访问
+var sharedAppDelegate: AppDelegate?
+
+class AppDelegate: NSObject, NSApplicationDelegate {
+    var mainWindow: NSWindow?
+    
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        // 保存全局引用
+        sharedAppDelegate = self
+        
+        // 创建主窗口
+        createOrShowMainWindow()
+    }
+    
+    // 创建或显示主窗口
+    func createOrShowMainWindow() {
+        // 如果窗口已存在但被关闭，重新显示它
+        if let window = mainWindow {
+            window.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+            return
+        }
+        
+        // 创建新窗口
+        let contentView = ContentView()
+        let hostingController = NSHostingController(rootView: contentView)
+        
+        let window = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 400, height: 500),
+            styleMask: [.titled, .closable, .miniaturizable],
+            backing: .buffered,
+            defer: false
+        )
+        window.title = "番茄钟"
+        window.center()
+        window.contentViewController = hostingController
+        
+        // 设置窗口关闭时的处理
+        window.isReleasedWhenClosed = false
+        
+        window.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+        
+        mainWindow = window
+    }
+    
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        return false // 关闭窗口后应用继续在后台运行
     }
 }
 
 @main
 struct PomodoroLockApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    
     var body: some Scene {
-        WindowGroup {
-            ContentView()
+        Settings {
+            EmptyView()
         }
     }
 }
