@@ -152,7 +152,7 @@ class PomodoroTimer: ObservableObject {
                                         styleMask: [.borderless],
                                         backing: .buffered,
                                         defer: false)
-            self.breakWindow?.title = "休息模式"
+            self.breakWindow?.title = NSLocalizedString("break_time", comment: "Break window title")
             self.breakWindow?.level = .screenSaver
             self.breakWindow?.isOpaque = false
             self.breakWindow?.backgroundColor = NSColor.clear
@@ -246,28 +246,36 @@ class PomodoroTimer: ObservableObject {
         let menu = NSMenu()
         
         // 打开主界面
-        let openMainItem = NSMenuItem(title: "打开主界面", action: #selector(openMainWindow), keyEquivalent: "o")
+        let openMainItem = NSMenuItem(title: NSLocalizedString("open_main_window", comment: "Menu item to open main window"),
+                                     action: #selector(openMainWindow),
+                                     keyEquivalent: "o")
         openMainItem.target = self
         menu.addItem(openMainItem)
         
         menu.addItem(NSMenuItem.separator())
         
         // 开始/暂停计时
-        let startStopItem = NSMenuItem(title: isRunning ? "暂停计时" : "开始计时",
+        let startStopItem = NSMenuItem(title: isRunning ?
+                                             NSLocalizedString("pause_timer", comment: "Menu item to pause timer") :
+                                             NSLocalizedString("start_timer", comment: "Menu item to start timer"),
                                       action: #selector(toggleTimer),
                                       keyEquivalent: "p")
         startStopItem.target = self
         menu.addItem(startStopItem)
         
         // 停止计时
-        let stopItem = NSMenuItem(title: "停止计时", action: #selector(stopTimerFromMenu), keyEquivalent: "s")
+        let stopItem = NSMenuItem(title: NSLocalizedString("stop_timer", comment: "Menu item to stop timer"),
+                                 action: #selector(stopTimerFromMenu),
+                                 keyEquivalent: "s")
         stopItem.target = self
         menu.addItem(stopItem)
         
         menu.addItem(NSMenuItem.separator())
         
         // 退出应用
-        let quitItem = NSMenuItem(title: "退出", action: #selector(quitApp), keyEquivalent: "q")
+        let quitItem = NSMenuItem(title: NSLocalizedString("quit", comment: "Menu item to quit app"),
+                                 action: #selector(quitApp),
+                                 keyEquivalent: "q")
         quitItem.target = self
         menu.addItem(quitItem)
         
@@ -311,7 +319,7 @@ struct BreakView: View {
 
     var body: some View {
         VStack {
-            Text(timer.timeRemaining > 0 ? "休息时间 ⏳" : "休息时间已结束 ✓")
+            Text(timer.timeRemaining > 0 ? LocalizedStringKey("break_time_ongoing") : LocalizedStringKey("break_time_ended"))
                 .font(.largeTitle)
                 .foregroundColor(.white)
                 .padding()
@@ -322,14 +330,14 @@ struct BreakView: View {
                 .foregroundColor(timer.timeRemaining > 0 ? .white : .green)
                 .padding()
 
-            Button("结束休息") {
+            Button(LocalizedStringKey("end_break")) {
                 timer.dismissBreakScreen()
             }
             .buttonStyle(.borderedProminent)
             .padding(.bottom, 5)
             .foregroundColor(.white)
             
-            Button("继续番茄计时") {
+            Button(LocalizedStringKey("continue_pomodoro")) {
                 timer.endBreakAndStartNewPomodoro()
             }
             .buttonStyle(.bordered)
@@ -346,7 +354,7 @@ struct ContentView: View {
 
     var body: some View {
         VStack {
-            Text(pomodoro.isBreakTime ? "休息时间" : "工作时间")
+            Text(pomodoro.isBreakTime ? LocalizedStringKey("break_time") : LocalizedStringKey("work_time"))
                 .font(.largeTitle)
                 .padding()
 
@@ -356,21 +364,21 @@ struct ContentView: View {
                 .padding()
             
             VStack(alignment: .leading) {
-                Toggle("菜单栏显示", isOn: $pomodoro.showMenuBarTimer)
-                    .help("启用后在菜单栏显示图标；禁用则隐藏菜单栏图标")
-                Toggle("自动结束休息", isOn: $pomodoro.autoEndBreak)
-                    .help("启用后，休息时间结束会自动关闭休息界面；禁用则等待手动点击")
+                Toggle(LocalizedStringKey("menu_bar_display"), isOn: $pomodoro.showMenuBarTimer)
+                    .help(LocalizedStringKey("menu_bar_display_help"))
+                Toggle(LocalizedStringKey("auto_end_break"), isOn: $pomodoro.autoEndBreak)
+                    .help(LocalizedStringKey("auto_end_break_help"))
             }
             .padding()
 
             HStack {
-                Button(pomodoro.isRunning ? "暂停" : "开始") {
+                Button(pomodoro.isRunning ? LocalizedStringKey("pause") : LocalizedStringKey("start")) {
                     pomodoro.isRunning ? pomodoro.pause() : pomodoro.start()
                 }
                 .buttonStyle(.borderedProminent)
                 .padding()
 
-                Button("停止") {
+                Button(LocalizedStringKey("stop")) {
                     pomodoro.stop()
                 }
                 .buttonStyle(.bordered)
@@ -378,8 +386,8 @@ struct ContentView: View {
             }
 
             HStack {
-                Text("工作时间: ")
-                TextField("分钟", value: Binding(get: {
+                Text(LocalizedStringKey("work_duration"))
+                TextField(LocalizedStringKey("minutes"), value: Binding(get: {
                     pomodoro.workDuration / 60
                 }, set: { newValue in
                     pomodoro.workDuration = newValue * 60
@@ -391,8 +399,8 @@ struct ContentView: View {
             .padding()
 
             HStack {
-                Text("休息时间: ")
-                TextField("分钟", value: Binding(get: {
+                Text(LocalizedStringKey("break_duration"))
+                TextField(LocalizedStringKey("minutes"), value: Binding(get: {
                     pomodoro.breakDuration / 60
                 }, set: { newValue in
                     pomodoro.breakDuration = newValue * 60
@@ -403,7 +411,7 @@ struct ContentView: View {
             }
             .padding()
             
-            Button("立即进入休息模式") {
+            Button(LocalizedStringKey("enter_break_mode")) {
                 pomodoro.startBreakManually()
             }
             .buttonStyle(.bordered)
@@ -447,7 +455,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             backing: .buffered,
             defer: false
         )
-        window.title = "番茄钟"
+        window.title = NSLocalizedString("PomodoroLock", comment: "Main window title")
         window.center()
         window.contentViewController = hostingController
         

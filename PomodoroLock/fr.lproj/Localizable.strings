@@ -1,0 +1,37 @@
+/* 
+  Localizable.strings
+  PomodoroLock
+
+  French localization
+*/
+
+// Nom de l'application et titres des fenêtres
+"PomodoroLock" = "Minuteur Pomodoro";
+
+// Texte de l'interface principale
+"work_time" = "Temps de travail";
+"break_time" = "Temps de pause";
+"menu_bar_display" = "Affichage dans la barre de menu";
+"menu_bar_display_help" = "Lorsque activé, affiche l'icône dans la barre de menu ; lorsque désactivé, masque l'icône";
+"auto_end_break" = "Fin automatique de la pause";
+"auto_end_break_help" = "Lorsque activé, l'écran de pause se ferme automatiquement à la fin du temps ; lorsque désactivé, attend un clic manuel";
+"start" = "Démarrer";
+"pause" = "Pause";
+"stop" = "Arrêter";
+"work_duration" = "Durée de travail : ";
+"break_duration" = "Durée de pause : ";
+"minutes" = "minutes";
+"enter_break_mode" = "Entrer en mode pause maintenant";
+
+// Texte de l'écran de pause
+"break_time_ongoing" = "Temps de pause ⏳";
+"break_time_ended" = "Pause terminée ✓";
+"end_break" = "Terminer la pause";
+"continue_pomodoro" = "Continuer le Pomodoro";
+
+// Texte de la barre de menu
+"open_main_window" = "Ouvrir la fenêtre principale";
+"start_timer" = "Démarrer le minuteur";
+"pause_timer" = "Mettre en pause le minuteur";
+"stop_timer" = "Arrêter le minuteur";
+"quit" = "Quitter";

@@ -1,0 +1,37 @@
+/* 
+  Localizable.strings
+  PomodoroLock
+
+  German localization
+*/
+
+// App-Name und Fenstertitel
+"PomodoroLock" = "Pomodoro Timer";
+
+// Hauptoberfläche Text
+"work_time" = "Arbeitszeit";
+"break_time" = "Pausenzeit";
+"menu_bar_display" = "Menüleiste anzeigen";
+"menu_bar_display_help" = "Wenn aktiviert, wird das Symbol in der Menüleiste angezeigt; wenn deaktiviert, wird das Symbol ausgeblendet";
+"auto_end_break" = "Pause automatisch beenden";
+"auto_end_break_help" = "Wenn aktiviert, wird der Pausenbildschirm automatisch geschlossen, wenn die Zeit abgelaufen ist; wenn deaktiviert, wartet auf manuellen Klick";
+"start" = "Start";
+"pause" = "Pause";
+"stop" = "Stopp";
+"work_duration" = "Arbeitsdauer: ";
+"break_duration" = "Pausendauer: ";
+"minutes" = "Minuten";
+"enter_break_mode" = "Jetzt in den Pausenmodus wechseln";
+
+// Pausenbildschirm Text
+"break_time_ongoing" = "Pausenzeit ⏳";
+"break_time_ended" = "Pause beendet ✓";
+"end_break" = "Pause beenden";
+"continue_pomodoro" = "Pomodoro fortsetzen";
+
+// Menüleiste Text
+"open_main_window" = "Hauptfenster öffnen";
+"start_timer" = "Timer starten";
+"pause_timer" = "Timer pausieren";
+"stop_timer" = "Timer stoppen";
+"quit" = "Beenden";

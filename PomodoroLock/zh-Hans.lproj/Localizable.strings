@@ -1,0 +1,37 @@
+/* 
+  Localizable.strings
+  PomodoroLock
+
+  Chinese (Simplified) localization
+*/
+
+// 应用名称和窗口标题
+"PomodoroLock" = "番茄钟";
+
+// 主界面文本
+"work_time" = "工作时间";
+"break_time" = "休息时间";
+"menu_bar_display" = "菜单栏显示";
+"menu_bar_display_help" = "启用后在菜单栏显示图标；禁用则隐藏菜单栏图标";
+"auto_end_break" = "自动结束休息";
+"auto_end_break_help" = "启用后，休息时间结束会自动关闭休息界面；禁用则等待手动点击";
+"start" = "开始";
+"pause" = "暂停";
+"stop" = "停止";
+"work_duration" = "工作时间: ";
+"break_duration" = "休息时间: ";
+"minutes" = "分钟";
+"enter_break_mode" = "立即进入休息模式";
+
+// 休息界面文本
+"break_time_ongoing" = "休息时间 ⏳";
+"break_time_ended" = "休息时间已结束 ✓";
+"end_break" = "结束休息";
+"continue_pomodoro" = "继续番茄计时";
+
+// 菜单栏文本
+"open_main_window" = "打开主界面";
+"start_timer" = "开始计时";
+"pause_timer" = "暂停计时";
+"stop_timer" = "停止计时";
+"quit" = "退出";

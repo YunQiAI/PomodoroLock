@@ -1,0 +1,37 @@
+/* 
+  Localizable.strings
+  PomodoroLock
+
+  Spanish localization
+*/
+
+// Nombre de la aplicación y títulos de ventanas
+"PomodoroLock" = "Temporizador Pomodoro";
+
+// Texto de la interfaz principal
+"work_time" = "Tiempo de trabajo";
+"break_time" = "Tiempo de descanso";
+"menu_bar_display" = "Mostrar en barra de menú";
+"menu_bar_display_help" = "Cuando está activado, muestra el icono en la barra de menú; cuando está desactivado, oculta el icono";
+"auto_end_break" = "Finalizar descanso automáticamente";
+"auto_end_break_help" = "Cuando está activado, la pantalla de descanso se cierra automáticamente al finalizar el tiempo; cuando está desactivado, espera un clic manual";
+"start" = "Iniciar";
+"pause" = "Pausar";
+"stop" = "Detener";
+"work_duration" = "Duración del trabajo: ";
+"break_duration" = "Duración del descanso: ";
+"minutes" = "minutos";
+"enter_break_mode" = "Entrar en modo descanso ahora";
+
+// Texto de la pantalla de descanso
+"break_time_ongoing" = "Tiempo de descanso ⏳";
+"break_time_ended" = "Descanso finalizado ✓";
+"end_break" = "Finalizar descanso";
+"continue_pomodoro" = "Continuar Pomodoro";
+
+// Texto de la barra de menú
+"open_main_window" = "Abrir ventana principal";
+"start_timer" = "Iniciar temporizador";
+"pause_timer" = "Pausar temporizador";
+"stop_timer" = "Detener temporizador";
+"quit" = "Salir";

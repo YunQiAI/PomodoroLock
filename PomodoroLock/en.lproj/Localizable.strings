@@ -1,0 +1,37 @@
+/* 
+  Localizable.strings
+  PomodoroLock
+
+  English localization
+*/
+
+// App name and window titles
+"PomodoroLock" = "Pomodoro Timer";
+
+// Main interface text
+"work_time" = "Work Time";
+"break_time" = "Break Time";
+"menu_bar_display" = "Menu Bar Display";
+"menu_bar_display_help" = "When enabled, shows icon in menu bar; when disabled, hides the icon";
+"auto_end_break" = "Auto End Break";
+"auto_end_break_help" = "When enabled, break screen closes automatically when time is up; when disabled, waits for manual click";
+"start" = "Start";
+"pause" = "Pause";
+"stop" = "Stop";
+"work_duration" = "Work Duration: ";
+"break_duration" = "Break Duration: ";
+"minutes" = "minutes";
+"enter_break_mode" = "Enter Break Mode Now";
+
+// Break screen text
+"break_time_ongoing" = "Break Time ⏳";
+"break_time_ended" = "Break Time Ended ✓";
+"end_break" = "End Break";
+"continue_pomodoro" = "Continue Pomodoro";
+
+// Menu bar text
+"open_main_window" = "Open Main Window";
+"start_timer" = "Start Timer";
+"pause_timer" = "Pause Timer";
+"stop_timer" = "Stop Timer";
+"quit" = "Quit";

@@ -1,0 +1,37 @@
+/* 
+  Localizable.strings
+  PomodoroLock
+
+  Korean localization
+*/
+
+// 앱 이름 및 창 제목
+"PomodoroLock" = "포모도로 타이머";
+
+// 메인 인터페이스 텍스트
+"work_time" = "작업 시간";
+"break_time" = "휴식 시간";
+"menu_bar_display" = "메뉴 바 표시";
+"menu_bar_display_help" = "활성화하면 메뉴 바에 아이콘이 표시됩니다. 비활성화하면 아이콘이 숨겨집니다";
+"auto_end_break" = "자동 휴식 종료";
+"auto_end_break_help" = "활성화하면 시간이 다 되면 휴식 화면이 자동으로 닫힙니다. 비활성화하면 수동 클릭을 기다립니다";
+"start" = "시작";
+"pause" = "일시 중지";
+"stop" = "중지";
+"work_duration" = "작업 시간: ";
+"break_duration" = "휴식 시간: ";
+"minutes" = "분";
+"enter_break_mode" = "지금 휴식 모드 시작";
+
+// 휴식 화면 텍스트
+"break_time_ongoing" = "휴식 시간 ⏳";
+"break_time_ended" = "휴식 시간 종료 ✓";
+"end_break" = "휴식 종료";
+"continue_pomodoro" = "포모도로 계속하기";
+
+// 메뉴 바 텍스트
+"open_main_window" = "메인 창 열기";
+"start_timer" = "타이머 시작";
+"pause_timer" = "타이머 일시 중지";
+"stop_timer" = "타이머 중지";
+"quit" = "종료";

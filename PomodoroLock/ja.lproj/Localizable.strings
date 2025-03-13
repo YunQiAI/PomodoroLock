@@ -1,0 +1,37 @@
+/* 
+  Localizable.strings
+  PomodoroLock
+
+  Japanese localization
+*/
+
+// アプリ名とウィンドウタイトル
+"PomodoroLock" = "ポモドーロタイマー";
+
+// メインインターフェーステキスト
+"work_time" = "作業時間";
+"break_time" = "休憩時間";
+"menu_bar_display" = "メニューバー表示";
+"menu_bar_display_help" = "有効にするとメニューバーにアイコンを表示；無効にするとアイコンを非表示";
+"auto_end_break" = "自動休憩終了";
+"auto_end_break_help" = "有効にすると、休憩時間が終了すると自動的に休憩画面を閉じます；無効にすると手動クリックを待ちます";
+"start" = "開始";
+"pause" = "一時停止";
+"stop" = "停止";
+"work_duration" = "作業時間: ";
+"break_duration" = "休憩時間: ";
+"minutes" = "分";
+"enter_break_mode" = "今すぐ休憩モードに入る";
+
+// 休憩画面テキスト
+"break_time_ongoing" = "休憩時間 ⏳";
+"break_time_ended" = "休憩時間終了 ✓";
+"end_break" = "休憩終了";
+"continue_pomodoro" = "ポモドーロを続ける";
+
+// メニューバーテキスト
+"open_main_window" = "メイン画面を開く";
+"start_timer" = "タイマー開始";
+"pause_timer" = "タイマー一時停止";
+"stop_timer" = "タイマー停止";
+"quit" = "終了";
