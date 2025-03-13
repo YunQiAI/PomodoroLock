@@ -1,5 +1,8 @@
 # PomodoroLock
 
+![작업 시간 인터페이스](path/to/work_time_interface.png)
+![휴식 시간 인터페이스](path/to/break_time_interface.png)
+
 집중력과 생산성을 높이는 데 도움이 되는 macOS용 간단하고 효과적인 포모도로 타이머 애플리케이션입니다.
 
 ## 기능

@@ -2,6 +2,9 @@
 
 *Read this in other languages: [English](README.md), [简体中文](README.zh-Hans.md), [日本語](README.ja.md), [한국어](README.ko.md), [Français](README.fr.md), [Deutsch](README.de.md), [Español](README.es.md)*
 
+![Work Time Interface](path/to/work_time_interface.png)
+![Break Time Interface](path/to/break_time_interface.png)
+
 A simple and effective Pomodoro Timer application for macOS that helps you stay focused and productive.
 
 ## Features
@@ -38,6 +41,16 @@ The menu bar icon provides quick access to:
 - Start/pause the timer
 - Stop the timer
 - Quit the application
+
+## Interface
+
+### Work Time Interface
+
+![Work Time Interface](path/to/work_time_interface.png)
+
+### Break Time Interface
+
+![Break Time Interface](path/to/break_time_interface.png)
 
 ## How It Works
 

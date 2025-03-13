@@ -1,5 +1,8 @@
 # PomodoroLock
 
+![工作时间界面](path/to/work_time_interface.png)
+![休息时间界面](path/to/break_time_interface.png)
+
 一个简单高效的macOS番茄钟应用，帮助您保持专注和提高生产力。
 
 ## 功能特点

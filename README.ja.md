@@ -1,5 +1,8 @@
 # PomodoroLock
 
+![作業時間インターフェース](path/to/work_time_interface.png)
+![休憩時間インターフェース](path/to/break_time_interface.png)
+
 macOS用のシンプルで効果的なポモドーロタイマーアプリケーションで、集中力と生産性を高めます。
 
 ## 機能

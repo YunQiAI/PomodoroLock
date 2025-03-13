@@ -1,5 +1,8 @@
 # PomodoroLock
 
+![Arbeitszeit-Schnittstelle](path/to/work_time_interface.png)
+![Pausenzeit-Schnittstelle](path/to/break_time_interface.png)
+
 Eine einfache und effektive Pomodoro-Timer-Anwendung für macOS, die Ihnen hilft, konzentriert und produktiv zu bleiben.
 
 ## Funktionen

@@ -1,5 +1,8 @@
 # PomodoroLock
 
+![Interface de temps de travail](path/to/work_time_interface.png)
+![Interface de temps de pause](path/to/break_time_interface.png)
+
 Une application de minuteur Pomodoro simple et efficace pour macOS qui vous aide à rester concentré et productif.
 
 ## Fonctionnalités
