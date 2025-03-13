@@ -2,6 +2,7 @@ import SwiftUI
 import Combine
 import AppKit
 import AVFoundation
+import IOKit.pwr_mgt // 导入IOKit电源管理模块
 
 // 创建一个全局单例PomodoroTimer
 let sharedPomodoroTimer = PomodoroTimer()
@@ -25,6 +26,7 @@ class PomodoroTimer: ObservableObject {
     private var breakWindow: NSWindow?
     private var statusItem: NSStatusItem?
     private var audioPlayer: AVAudioPlayer?
+    private var sleepAssertion: IOPMAssertionID = 0 // 用于存储休眠断言ID
 
     init() {
         setupBreakWindow()
@@ -121,6 +123,9 @@ class PomodoroTimer: ObservableObject {
         // 确保先停止任何可能正在运行的计时器
         timer?.invalidate()
         
+        // 阻止系统在休息期间休眠
+        preventSleep()
+        
         // 使用RunLoop.main.add方法添加计时器，提高精度
         let newTimer = Timer(timeInterval: 1.0, repeats: true) { [weak self] _ in
             guard let self = self else { return }
@@ -187,6 +192,9 @@ class PomodoroTimer: ObservableObject {
             self.isBreakTime = false
             self.resetTimer()
             
+            // 恢复系统可以休眠
+            self.allowSleep()
+            
             // 注意：用户手动结束休息时不播放提示音
         }
     }
@@ -201,6 +209,9 @@ class PomodoroTimer: ObservableObject {
             self.breakWindow?.orderOut(nil)
             self.isBreakTime = false
             self.resetTimer()
+            
+            // 恢复系统可以休眠
+            self.allowSleep()
             
             // 注意：用户点击"继续番茄计时"时不播放提示音
             
@@ -311,6 +322,37 @@ class PomodoroTimer: ObservableObject {
         let minutes = seconds / 60
         let seconds = seconds % 60
         return String(format: "%02d:%02d", minutes, seconds)
+    }
+    
+    // 防止系统休眠
+    private func preventSleep() {
+        var assertionID: IOPMAssertionID = 0
+        let reason = "PomodoroLock Break Time" as CFString
+        let success = IOPMAssertionCreateWithName(
+            kIOPMAssertionTypePreventUserIdleSystemSleep as CFString,
+            IOPMAssertionLevel(kIOPMAssertionLevelOn),
+            reason,
+            &assertionID)
+        
+        if success == kIOReturnSuccess {
+            sleepAssertion = assertionID
+            print("已阻止系统休眠")
+        } else {
+            print("无法阻止系统休眠")
+        }
+    }
+    
+    // 允许系统休眠
+    private func allowSleep() {
+        if sleepAssertion != 0 {
+            let success = IOPMAssertionRelease(sleepAssertion)
+            if success == kIOReturnSuccess {
+                print("已恢复系统休眠")
+                sleepAssertion = 0
+            } else {
+                print("无法恢复系统休眠")
+            }
+        }
     }
 }
 
