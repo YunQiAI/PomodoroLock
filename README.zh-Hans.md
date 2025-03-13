@@ -1,6 +1,6 @@
 # PomodoroLock
 
-<img src="Assets/interface.png" alt="Work Time Interface" width="200">
+<!-- <img src="Assets/interface.png" alt="Work Time Interface" width="200"> -->
 <img src="Assets/BreakTime.png" alt="Break Time Interface" width="600">
 
 一个简单高效的macOS番茄钟应用，帮助您保持专注和提高生产力。

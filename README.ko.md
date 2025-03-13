@@ -1,6 +1,6 @@
 # PomodoroLock
 
-<img src="Assets/interface.png" alt="Work Time Interface" width="200">
+<!-- <img src="Assets/interface.png" alt="Work Time Interface" width="200"> -->
 <img src="Assets/BreakTime.png" alt="Break Time Interface" width="600">
 
 집중력과 생산성을 높이는 데 도움이 되는 macOS용 간단하고 효과적인 포모도로 타이머 애플리케이션입니다.

@@ -2,7 +2,7 @@
 
 *Read this in other languages: [English](README.md), [简体中文](README.zh-Hans.md), [日本語](README.ja.md), [한국어](README.ko.md), [Français](README.fr.md), [Deutsch](README.de.md), [Español](README.es.md)*
 
-<img src="Assets/interface.png" alt="Work Time Interface" width="200">
+<!-- <img src="Assets/interface.png" alt="Work Time Interface" width="200"> -->
 <img src="Assets/BreakTime.png" alt="Break Time Interface" width="600">
 
 A simple and effective Pomodoro Timer application for macOS that helps you stay focused and productive.

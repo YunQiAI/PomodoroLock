@@ -1,6 +1,6 @@
 # PomodoroLock
 
-<img src="Assets/interface.png" alt="Work Time Interface" width="200">
+<!-- <img src="Assets/interface.png" alt="Work Time Interface" width="200"> -->
 <img src="Assets/BreakTime.png" alt="Break Time Interface" width="600">
 
 PomodoroLock es una aplicación de productividad que combina la técnica Pomodoro con funcionalidades de bloqueo para ayudarte a mantener el enfoque y mejorar tu productividad. Elimina distracciones y optimiza tu tiempo de trabajo con ciclos de concentración estructurados.
