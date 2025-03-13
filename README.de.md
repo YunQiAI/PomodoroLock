@@ -1,9 +1,20 @@
 # PomodoroLock
 
-![Arbeitszeit-Schnittstelle](path/to/work_time_interface.png)
-![Pausenzeit-Schnittstelle](path/to/break_time_interface.png)
+<img src="Assets/interface.png" alt="Work Time Interface" width="200">
+<img src="Assets/BreakTime.png" alt="Break Time Interface" width="600">
 
 Eine einfache und effektive Pomodoro-Timer-Anwendung für macOS, die Ihnen hilft, konzentriert und produktiv zu bleiben.
+
+🚀 Ihr exklusiver Pomodoro-Timer mit intelligentem Bildschirmsperre, um Ihnen zu helfen, sich tief zu konzentrieren! 🚀
+
+🔹 Wissenschaftliches Zeitmanagement - Pomodoro-Technik, um Ihre Effizienz zu verdoppeln!
+🔹 Automatischer Bildschirmsperrmodus - Erzwingen Sie Pausen, um Ermüdung zu vermeiden und Ihre Gesundheit zu schützen!
+🔹 Anpassbare Dauer - Stellen Sie die Arbeits- und Pausenzeiten flexibel ein, um Ihrem Rhythmus zu entsprechen!
+🔹 Minimalistisches UI-Design - Sauber, intuitiv und ablenkungsfrei, um sich auf Ihre Aufgaben zu konzentrieren!
+🔹 Effizienter Arbeitsablauf - Betreten Sie leicht den Fokusmodus, verabschieden Sie sich von Prokrastination und steigern Sie Ihre Produktivität!
+
+✨ Machen Sie die Arbeit rhythmischer und die Konzentration einfacher! ✨
+🔥 Laden Sie jetzt herunter und erleben Sie Ihr effizientes Konzentrationswerkzeug! 🔥
 
 ## Funktionen
 

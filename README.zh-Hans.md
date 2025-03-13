@@ -1,9 +1,20 @@
 # PomodoroLock
 
-![工作时间界面](path/to/work_time_interface.png)
-![休息时间界面](path/to/break_time_interface.png)
+<img src="Assets/interface.png" alt="Work Time Interface" width="200">
+<img src="Assets/BreakTime.png" alt="Break Time Interface" width="600">
 
 一个简单高效的macOS番茄钟应用，帮助您保持专注和提高生产力。
+
+🚀 你的专属番茄钟，智能锁屏助你深度专注！ 🚀
+
+🔹 科学时间管理 —— 番茄工作法，让你的效率翻倍！
+🔹 自动锁屏模式 —— 强制休息，避免过度疲劳，保护健康！
+🔹 可自定义时长 —— 灵活设定工作与休息时间，适配你的节奏！
+🔹 极简 UI 设计 —— 干净、直观、无干扰，专注你的任务！
+🔹 高效工作流 —— 轻松进入专注模式，告别拖延，提高生产力！
+
+✨ 让工作更有节奏，让专注变得轻松！ ✨
+🔥 现在下载，立即体验你的 高效专注神器！ 🔥
 
 ## 功能特点
 

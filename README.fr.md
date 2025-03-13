@@ -1,9 +1,20 @@
 # PomodoroLock
 
-![Interface de temps de travail](path/to/work_time_interface.png)
-![Interface de temps de pause](path/to/break_time_interface.png)
+<img src="Assets/interface.png" alt="Work Time Interface" width="200">
+<img src="Assets/BreakTime.png" alt="Break Time Interface" width="600">
 
 Une application de minuteur Pomodoro simple et efficace pour macOS qui vous aide à rester concentré et productif.
+
+🚀 Votre minuteur Pomodoro exclusif avec verrouillage intelligent de l'écran pour vous aider à vous concentrer profondément ! 🚀
+
+🔹 Gestion du temps scientifique - Technique Pomodoro pour doubler votre efficacité !
+🔹 Mode de verrouillage automatique de l'écran - Imposer des pauses pour éviter la fatigue et protéger votre santé !
+🔹 Durées personnalisables - Réglez les durées de travail et de pause selon votre rythme !
+🔹 Conception UI minimaliste - Propre, intuitive et sans distraction pour se concentrer sur vos tâches !
+🔹 Flux de travail efficace - Entrez facilement en mode concentration, dites adieu à la procrastination et augmentez votre productivité !
+
+✨ Rendez le travail plus rythmé et la concentration plus facile ! ✨
+🔥 Téléchargez maintenant et découvrez votre outil de concentration efficace ! 🔥
 
 ## Fonctionnalités
 

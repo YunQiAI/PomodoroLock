@@ -1,9 +1,20 @@
 # PomodoroLock
 
-![작업 시간 인터페이스](path/to/work_time_interface.png)
-![휴식 시간 인터페이스](path/to/break_time_interface.png)
+<img src="Assets/interface.png" alt="Work Time Interface" width="200">
+<img src="Assets/BreakTime.png" alt="Break Time Interface" width="600">
 
 집중력과 생산성을 높이는 데 도움이 되는 macOS용 간단하고 효과적인 포모도로 타이머 애플리케이션입니다.
+
+🚀 당신만의 포모도로 타이머, 스마트 화면 잠금으로 깊이 집중하세요! 🚀
+
+🔹 과학적인 시간 관리 - 포모도로 기법으로 효율성을 두 배로!
+🔹 자동 화면 잠금 모드 - 휴식을 강제하여 피로를 피하고 건강을 보호하세요!
+🔹 사용자 정의 가능한 기간 - 작업 및 휴식 시간을 유연하게 설정하여 리듬에 맞추세요!
+🔹 미니멀리스트 UI 디자인 - 깨끗하고 직관적이며 방해 없는 작업 집중!
+🔹 효율적인 워크플로우 - 쉽게 집중 모드에 들어가 지연을 없애고 생산성을 높이세요!
+
+✨ 작업을 더 리드미컬하게 만들고 집중을 더 쉽게 만드세요! ✨
+🔥 지금 다운로드하고 효율적인 집중 도구를 경험하세요! 🔥
 
 ## 기능
 

@@ -1,9 +1,20 @@
 # PomodoroLock
 
-![Interfaz de tiempo de trabajo](path/to/work_time_interface.png)
-![Interfaz de tiempo de descanso](path/to/break_time_interface.png)
+<img src="Assets/interface.png" alt="Work Time Interface" width="200">
+<img src="Assets/BreakTime.png" alt="Break Time Interface" width="600">
 
 PomodoroLock es una aplicación de productividad que combina la técnica Pomodoro con funcionalidades de bloqueo para ayudarte a mantener el enfoque y mejorar tu productividad. Elimina distracciones y optimiza tu tiempo de trabajo con ciclos de concentración estructurados.
+
+🚀 Tu temporizador Pomodoro exclusivo con bloqueo de pantalla inteligente para ayudarte a concentrarte profundamente! 🚀
+
+🔹 Gestión del tiempo científica - Técnica Pomodoro para duplicar tu eficiencia!
+🔹 Modo de bloqueo automático de pantalla - Impone descansos para evitar la fatiga y proteger tu salud!
+🔹 Duraciones personalizables - Ajusta las duraciones de trabajo y descanso según tu ritmo!
+🔹 Diseño de UI minimalista - Limpio, intuitivo y sin distracciones para concentrarte en tus tareas!
+🔹 Flujo de trabajo eficiente - Entra fácilmente en modo de concentración, despídete de la procrastinación y aumenta tu productividad!
+
+✨ Haz que el trabajo sea más rítmico y la concentración más fácil! ✨
+🔥 Descarga ahora y experimenta tu herramienta de concentración eficiente! 🔥
 
 ## Características principales
 - **Temporizador Pomodoro**: Trabaja con intervalos de tiempo predefinidos (por defecto 25 minutos de trabajo, 5 minutos de descanso).

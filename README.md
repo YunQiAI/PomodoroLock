@@ -2,10 +2,21 @@
 
 *Read this in other languages: [English](README.md), [简体中文](README.zh-Hans.md), [日本語](README.ja.md), [한국어](README.ko.md), [Français](README.fr.md), [Deutsch](README.de.md), [Español](README.es.md)*
 
-![Work Time Interface](path/to/work_time_interface.png)
-![Break Time Interface](path/to/break_time_interface.png)
+<img src="Assets/interface.png" alt="Work Time Interface" width="200">
+<img src="Assets/BreakTime.png" alt="Break Time Interface" width="600">
 
 A simple and effective Pomodoro Timer application for macOS that helps you stay focused and productive.
+
+🚀 Your exclusive Pomodoro timer with smart screen lock to help you focus deeply! 🚀
+
+🔹 Scientific time management - Pomodoro technique to double your efficiency!
+🔹 Automatic screen lock mode - Enforce breaks to avoid fatigue and protect your health!
+🔹 Customizable durations - Flexibly set work and break times to suit your rhythm!
+🔹 Minimalist UI design - Clean, intuitive, and distraction-free to focus on your tasks!
+🔹 Efficient workflow - Easily enter focus mode, say goodbye to procrastination, and boost productivity!
+
+✨ Make work more rhythmic and focus easier! ✨
+🔥 Download now and experience your efficient focus tool! 🔥
 
 ## Features
 
@@ -46,11 +57,11 @@ The menu bar icon provides quick access to:
 
 ### Work Time Interface
 
-![Work Time Interface](path/to/work_time_interface.png)
+![Work Time Interface](Assets/interface.png)
 
 ### Break Time Interface
 
-![Break Time Interface](path/to/break_time_interface.png)
+![Break Time Interface](Assets/break_time_interface.png)
 
 ## How It Works
 
