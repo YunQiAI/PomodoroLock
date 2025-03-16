@@ -23,7 +23,7 @@ class PomodoroTimer: ObservableObject {
     @Published var autoEndBreak: Bool = false // 是否自动结束休息
 
     private var timer: Timer?
-    private var breakWindow: NSWindow?
+    private var breakWindows: [NSWindow] = []
     private var statusItem: NSStatusItem?
     private var audioPlayer: AVAudioPlayer?
     private var sleepAssertion: IOPMAssertionID = 0 // 用于存储休眠断言ID
@@ -31,6 +31,7 @@ class PomodoroTimer: ObservableObject {
     init() {
         setupBreakWindow()
         setupMenuBar()
+        setupKeyboardMonitoring()
     }
 
     func start() {
@@ -83,6 +84,7 @@ class PomodoroTimer: ObservableObject {
         resetTimer()
         
         if isBreakTime {
+            setupBreakWindow() // 重新设置窗口，确保捕获所有当前连接的显示器
             startBreakTimer()
             showBreakWindow()
         } else {
@@ -115,6 +117,7 @@ class PomodoroTimer: ObservableObject {
     func startBreakManually() {
         isBreakTime = true
         resetTimer()
+        setupBreakWindow() // 重新设置窗口，确保捕获所有当前连接的显示器
         startBreakTimer()
         showBreakWindow()
     }
@@ -152,33 +155,80 @@ class PomodoroTimer: ObservableObject {
 
     private func setupBreakWindow() {
         DispatchQueue.main.async {
-            let screenSize = NSScreen.main?.frame ?? NSRect(x: 0, y: 0, width: 800, height: 600)
-            self.breakWindow = NSWindow(contentRect: screenSize,
-                                        styleMask: [.borderless],
-                                        backing: .buffered,
-                                        defer: false)
-            self.breakWindow?.title = NSLocalizedString("break_time", comment: "Break window title")
-            self.breakWindow?.level = .screenSaver
-            self.breakWindow?.isOpaque = false
-            self.breakWindow?.backgroundColor = NSColor.clear
-            self.breakWindow?.collectionBehavior = [.canJoinAllSpaces, .fullScreenPrimary]
+            // 清除旧窗口
+            self.breakWindows.removeAll()
             
-            let blurView = NSVisualEffectView(frame: screenSize)
-            blurView.blendingMode = .behindWindow
-            blurView.material = .fullScreenUI
-            blurView.state = .active
-            
-            let contentView = NSHostingView(rootView: BreakView(timer: self as PomodoroTimer))
-            contentView.frame = screenSize
-            blurView.addSubview(contentView)
-            
-            self.breakWindow?.contentView = blurView
+            // 获取所有连接的显示器
+            let screens = NSScreen.screens
+            if !screens.isEmpty {
+                // 为每个显示器创建一个窗口
+                for screen in screens {
+                    let screenFrame = screen.frame
+                    let window = NSWindow(
+                        contentRect: screenFrame,
+                        styleMask: [.borderless],
+                        backing: .buffered,
+                        defer: false
+                    )
+                    window.title = NSLocalizedString("break_time", comment: "Break window title")
+                    window.level = .screenSaver
+                    window.isOpaque = false
+                    window.backgroundColor = NSColor.clear
+                    window.collectionBehavior = [.canJoinAllSpaces, .fullScreenPrimary]
+                    // 设置窗口框架以确保显示在正确的屏幕上
+                    window.setFrame(screenFrame, display: false)
+                    
+                    let blurView = NSVisualEffectView(frame: NSRect(origin: .zero, size: screenFrame.size))
+                    blurView.blendingMode = .behindWindow
+                    blurView.material = .fullScreenUI
+                    blurView.state = .active
+                    
+                    let contentView = NSHostingView(rootView: BreakView(timer: self))
+                    contentView.frame = NSRect(origin: .zero, size: screenFrame.size)
+                    blurView.addSubview(contentView)
+                    
+                    window.contentView = blurView
+                    
+                    // 将窗口添加到数组
+                    self.breakWindows.append(window)
+                }
+            } else {
+                // 如果无法获取显示器信息，则创建一个默认窗口
+                let fallbackFrame = NSRect(x: 0, y: 0, width: 800, height: 600)
+                let window = NSWindow(
+                    contentRect: fallbackFrame,
+                    styleMask: [.borderless],
+                    backing: .buffered,
+                    defer: false
+                )
+                window.title = NSLocalizedString("break_time", comment: "Break window title")
+                window.level = .screenSaver
+                window.isOpaque = false
+                window.backgroundColor = NSColor.clear
+                window.collectionBehavior = [.canJoinAllSpaces, .fullScreenPrimary]
+                
+                let blurView = NSVisualEffectView(frame: fallbackFrame)
+                blurView.blendingMode = .behindWindow
+                blurView.material = .fullScreenUI
+                blurView.state = .active
+                
+                let contentView = NSHostingView(rootView: BreakView(timer: self))
+                contentView.frame = fallbackFrame
+                blurView.addSubview(contentView)
+                
+                window.contentView = blurView
+                
+                self.breakWindows.append(window)
+            }
         }
     }
 
     private func showBreakWindow() {
         DispatchQueue.main.async {
-            self.breakWindow?.makeKeyAndOrderFront(nil)
+            // 显示所有休息窗口
+            for window in self.breakWindows {
+                window.makeKeyAndOrderFront(nil)
+            }
         }
     }
 
@@ -188,7 +238,11 @@ class PomodoroTimer: ObservableObject {
             self.timer?.invalidate()
             self.timer = nil
             
-            self.breakWindow?.orderOut(nil)
+            // 隐藏所有休息窗口
+            for window in self.breakWindows {
+                window.orderOut(nil)
+            }
+            
             self.isBreakTime = false
             self.resetTimer()
             
@@ -199,6 +253,15 @@ class PomodoroTimer: ObservableObject {
         }
     }
     
+    // 添加带参数的dismissBreakScreen方法
+    func dismissBreakScreen(_ startNewPomodoro: Bool) {
+        if startNewPomodoro {
+            endBreakAndStartNewPomodoro()
+        } else {
+            dismissBreakScreen()
+        }
+    }
+    
     // 结束休息并开始新的番茄工作周期
     func endBreakAndStartNewPomodoro() {
         DispatchQueue.main.async {
@@ -206,7 +269,11 @@ class PomodoroTimer: ObservableObject {
             self.timer?.invalidate()
             self.timer = nil
             
-            self.breakWindow?.orderOut(nil)
+            // 隐藏所有休息窗口
+            for window in self.breakWindows {
+                window.orderOut(nil)
+            }
+            
             self.isBreakTime = false
             self.resetTimer()
             
@@ -314,8 +381,24 @@ class PomodoroTimer: ObservableObject {
         setupMenuBarMenu() // 更新菜单状态
     }
     
+    // 添加缺失的quitApp方法
     @objc private func quitApp() {
         NSApp.terminate(nil)
+    }
+    
+    private func setupKeyboardMonitoring() {
+        NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            guard let self = self, self.isBreakTime else { return event }
+            
+            if event.keyCode == 53 { // Esc键
+                self.dismissBreakScreen(false)
+                return nil // 消耗此事件
+            } else if event.keyCode == 36 { // Enter键
+                self.dismissBreakScreen(true)
+                return nil // 消耗此事件
+            }
+            return event
+        }
     }
 
     func timeString(_ seconds: Int) -> String {
