@@ -1,0 +1,4 @@
+"screen_change_title" = "休息模式已结束";
+"screen_change_message" = "由于屏幕配置变化，休息模式已自动结束。是否开始新的番茄工作周期？";
+"start_new_pomodoro" = "开始新番茄";
+"later" = "稍后再说";

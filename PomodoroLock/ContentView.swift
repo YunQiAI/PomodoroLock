@@ -3,6 +3,7 @@ import Combine
 import AppKit
 import AVFoundation
 import IOKit.pwr_mgt // 导入IOKit电源管理模块
+import UserNotifications // 添加通知框架
 
 // 创建一个全局单例PomodoroTimer
 let sharedPomodoroTimer = PomodoroTimer()
@@ -32,6 +33,8 @@ class PomodoroTimer: ObservableObject {
         setupBreakWindow()
         setupMenuBar()
         setupKeyboardMonitoring()
+        setupScreenChangeMonitoring() // 添加屏幕变化监听
+        setupNotificationResponseHandling() // 添加通知响应处理
     }
 
     func start() {
@@ -401,6 +404,85 @@ class PomodoroTimer: ObservableObject {
         }
     }
 
+    // 添加屏幕变化监听
+    private func setupScreenChangeMonitoring() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleScreenChange),
+            name: NSApplication.didChangeScreenParametersNotification,
+            object: nil
+        )
+    }
+    
+    // 处理屏幕变化事件
+    @objc private func handleScreenChange() {
+        // 只有在休息模式下才需要处理
+        if isBreakTime {
+            DispatchQueue.main.async {
+                // 退出休息模式
+                self.dismissBreakScreen()
+                
+                // 显示通知
+                self.showScreenChangeNotification()
+            }
+        }
+    }
+    
+    // 显示系统通知
+    private func showScreenChangeNotification() {
+        let center = UNUserNotificationCenter.current()
+        
+        // 创建开始新番茄周期的操作
+        let startAction = UNNotificationAction(
+            identifier: "START_POMODORO",
+            title: NSLocalizedString("start_new_pomodoro", comment: "Start a new pomodoro"),
+            options: .foreground
+        )
+        
+        // 创建稍后再说的操作
+        let laterAction = UNNotificationAction(
+            identifier: "LATER",
+            title: NSLocalizedString("later", comment: "Later"),
+            options: .destructive
+        )
+        
+        // 创建通知类别
+        let category = UNNotificationCategory(
+            identifier: "SCREEN_CHANGE",
+            actions: [startAction, laterAction],
+            intentIdentifiers: [],
+            options: []
+        )
+        
+        // 注册通知类别
+        center.setNotificationCategories([category])
+        
+        // 请求通知权限
+        center.requestAuthorization(options: [.alert, .sound]) { granted, error in
+            if granted {
+                DispatchQueue.main.async {
+                    let content = UNMutableNotificationContent()
+                    content.title = NSLocalizedString("screen_change_title", comment: "Screen configuration changed")
+                    content.body = NSLocalizedString("screen_change_message", comment: "Break mode was ended due to screen configuration change")
+                    content.sound = UNNotificationSound.default
+                    content.categoryIdentifier = "SCREEN_CHANGE" // 设置通知类别
+                    
+                    let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
+                    center.add(request) { error in
+                        if let error = error {
+                            print("通知发送失败: \(error.localizedDescription)")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // 设置通知响应处理
+    private func setupNotificationResponseHandling() {
+        UNUserNotificationCenter.current().delegate = NotificationDelegate.shared
+    }
+
     func timeString(_ seconds: Int) -> String {
         let minutes = seconds / 60
         let seconds = seconds % 60
@@ -436,6 +518,13 @@ class PomodoroTimer: ObservableObject {
                 print("无法恢复系统休眠")
             }
         }
+    }
+    
+    deinit {
+        // 移除通知监听
+        NotificationCenter.default.removeObserver(self)
+        // 确保释放休眠断言
+        allowSleep()
     }
 }
 
