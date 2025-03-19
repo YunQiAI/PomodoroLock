@@ -28,7 +28,7 @@ A simple and effective Pomodoro Timer application for macOS that helps you stay 
 
 ## Installation
 
-1. Download the latest release from the [Releases](https://github.com/yourusername/PomodoroLock/releases) page
+1. Download the latest release from the [Releases](https://github.com/YunQiAI/PomodoroLock/releases) page
 2. Drag the PomodoroLock app to your Applications folder
 3. Launch the app
 
