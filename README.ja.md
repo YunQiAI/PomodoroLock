@@ -26,7 +26,7 @@ macOS用のシンプルで効果的なポモドーロタイマーアプリケー
 
 ## インストール方法
 
-1. [リリースページ](https://github.com/yourusername/PomodoroLock/releases)から最新版をダウンロード
+1. [リリースページ](https://github.com/YunQiAI/PomodoroLock/releases)から最新版をダウンロード
 2. PomodoroLockアプリをアプリケーションフォルダにドラッグ
 3. アプリを起動
 

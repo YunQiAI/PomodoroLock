@@ -26,7 +26,7 @@
 
 ## 安装方法
 
-1. 从[发布页面](https://github.com/yourusername/PomodoroLock/releases)下载最新版本
+1. 从[发布页面](https://github.com/YunQiAI/PomodoroLock/releases)下载最新版本
 2. 将PomodoroLock应用拖到应用程序文件夹
 3. 启动应用
 

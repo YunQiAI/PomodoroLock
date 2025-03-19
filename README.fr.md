@@ -26,7 +26,7 @@ Une application de minuteur Pomodoro simple et efficace pour macOS qui vous aide
 
 ## Installation
 
-1. Téléchargez la dernière version depuis la page des [Versions](https://github.com/yourusername/PomodoroLock/releases)
+1. Téléchargez la dernière version depuis la page des [Versions](https://github.com/YunQiAI/PomodoroLock/releases)
 2. Faites glisser l'application PomodoroLock dans votre dossier Applications
 3. Lancez l'application
 

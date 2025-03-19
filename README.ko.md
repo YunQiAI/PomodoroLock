@@ -26,7 +26,7 @@
 
 ## 설치 방법
 
-1. [릴리스 페이지](https://github.com/yourusername/PomodoroLock/releases)에서 최신 버전 다운로드
+1. [릴리스 페이지](https://github.com/YunQiAI/PomodoroLock/releases)에서 최신 버전 다운로드
 2. PomodoroLock 앱을 응용 프로그램 폴더로 드래그
 3. 앱 실행
 
