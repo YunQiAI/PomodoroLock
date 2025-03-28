@@ -24,10 +24,13 @@ class PomodoroTimer: ObservableObject {
     @Published var autoEndBreak: Bool = false // 是否自动结束休息
 
     private var timer: Timer?
-    private var breakWindows: [NSWindow] = []
+    private var breakPanels: [NSPanel] = [] // 使用NSPanel替代NSWindow
     private var statusItem: NSStatusItem?
     private var audioPlayer: AVAudioPlayer?
     private var sleepAssertion: IOPMAssertionID = 0 // 用于存储休眠断言ID
+    private var spaceChangeObserver: NSObjectProtocol? // 用于存储空间切换观察者
+    private var missionControlObserver: NSObjectProtocol? // 用于存储Mission Control状态观察者
+    private var isInMissionControl: Bool = false // 跟踪是否处于Mission Control状态
 
     init() {
         setupBreakWindow()
@@ -35,6 +38,21 @@ class PomodoroTimer: ObservableObject {
         setupKeyboardMonitoring()
         setupScreenChangeMonitoring() // 添加屏幕变化监听
         setupNotificationResponseHandling() // 添加通知响应处理
+        setupSpaceChangeMonitoring() // 添加空间切换监听
+        setupMissionControlMonitoring() // 添加Mission Control监听
+    }
+    
+    deinit {
+        // 移除通知监听
+        if let observer = spaceChangeObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+        if let observer = missionControlObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+        NotificationCenter.default.removeObserver(self)
+        // 确保释放休眠断言
+        allowSleep()
     }
 
     func start() {
@@ -159,7 +177,10 @@ class PomodoroTimer: ObservableObject {
     private func setupBreakWindow() {
         DispatchQueue.main.async {
             // 清除旧窗口
-            self.breakWindows.removeAll()
+            for panel in self.breakPanels {
+                panel.orderOut(nil)
+            }
+            self.breakPanels.removeAll()
             
             // 获取所有连接的显示器
             let screens = NSScreen.screens
@@ -167,20 +188,38 @@ class PomodoroTimer: ObservableObject {
                 // 为每个显示器创建一个窗口
                 for screen in screens {
                     let screenFrame = screen.frame
-                    let window = NSWindow(
-                        contentRect: screenFrame,
-                        styleMask: [.borderless],
-                        backing: .buffered,
-                        defer: false
-                    )
-                    window.title = NSLocalizedString("break_time", comment: "Break window title")
-                    window.level = .screenSaver
-                    window.isOpaque = false
-                    window.backgroundColor = NSColor.clear
-                    window.collectionBehavior = [.canJoinAllSpaces, .fullScreenPrimary]
-                    // 设置窗口框架以确保显示在正确的屏幕上
-                    window.setFrame(screenFrame, display: false)
                     
+                    // 创建NSPanel而非NSWindow
+                    let panel = NSPanel(
+                        contentRect: screenFrame,
+                        styleMask: [.borderless, .nonactivatingPanel], // 无边框且非激活面板
+                        backing: .buffered,
+                        defer: false,
+                        screen: screen // 指定屏幕确保窗口显示在正确位置
+                    )
+                    panel.title = NSLocalizedString("break_time", comment: "Break window title")
+                    panel.level = .screenSaver // 使用高窗口级别
+                    panel.isOpaque = false
+                    panel.backgroundColor = NSColor.clear
+                    
+                    // 设置重要的集合行为 - 增强穿透所有空间和全屏应用的能力
+                    panel.collectionBehavior = [
+                        .canJoinAllSpaces,    // 可以出现在所有空间
+                        .fullScreenAuxiliary, // 允许出现在全屏应用上
+                        .stationary,          // Mission Control时保持位置
+                        .ignoresCycle         // 不参与应用切换循环
+                    ]
+                    
+                    // 其他关键属性
+                    panel.hidesOnDeactivate = false  // 应用非活跃时不隐藏
+                    panel.hasShadow = false          // 不显示窗口阴影
+                    panel.worksWhenModal = true      // 即使在模态状态下也工作
+                    panel.ignoresMouseEvents = false // 捕获鼠标事件防止穿透
+                    
+                    // 设置窗口框架确保显示在正确的屏幕上
+                    panel.setFrame(screenFrame, display: false)
+                    
+                    // 创建与之前相同的内容视图
                     let blurView = NSVisualEffectView(frame: NSRect(origin: .zero, size: screenFrame.size))
                     blurView.blendingMode = .behindWindow
                     blurView.material = .fullScreenUI
@@ -190,25 +229,26 @@ class PomodoroTimer: ObservableObject {
                     contentView.frame = NSRect(origin: .zero, size: screenFrame.size)
                     blurView.addSubview(contentView)
                     
-                    window.contentView = blurView
+                    panel.contentView = blurView
                     
-                    // 将窗口添加到数组
-                    self.breakWindows.append(window)
+                    // 将面板添加到数组
+                    self.breakPanels.append(panel)
                 }
             } else {
                 // 如果无法获取显示器信息，则创建一个默认窗口
                 let fallbackFrame = NSRect(x: 0, y: 0, width: 800, height: 600)
-                let window = NSWindow(
+                let panel = NSPanel(
                     contentRect: fallbackFrame,
-                    styleMask: [.borderless],
+                    styleMask: [.borderless, .nonactivatingPanel],
                     backing: .buffered,
                     defer: false
                 )
-                window.title = NSLocalizedString("break_time", comment: "Break window title")
-                window.level = .screenSaver
-                window.isOpaque = false
-                window.backgroundColor = NSColor.clear
-                window.collectionBehavior = [.canJoinAllSpaces, .fullScreenPrimary]
+                panel.title = NSLocalizedString("break_time", comment: "Break window title")
+                panel.level = .screenSaver
+                panel.isOpaque = false
+                panel.backgroundColor = NSColor.clear
+                panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .stationary]
+                panel.hidesOnDeactivate = false
                 
                 let blurView = NSVisualEffectView(frame: fallbackFrame)
                 blurView.blendingMode = .behindWindow
@@ -219,18 +259,32 @@ class PomodoroTimer: ObservableObject {
                 contentView.frame = fallbackFrame
                 blurView.addSubview(contentView)
                 
-                window.contentView = blurView
+                panel.contentView = blurView
                 
-                self.breakWindows.append(window)
+                self.breakPanels.append(panel)
             }
         }
     }
 
     private func showBreakWindow() {
         DispatchQueue.main.async {
-            // 显示所有休息窗口
-            for window in self.breakWindows {
-                window.makeKeyAndOrderFront(nil)
+            for panel in self.breakPanels {
+                // 使用更强制的方法确保窗口显示
+                panel.orderFrontRegardless()
+                
+                // 刷新窗口层级，确保保持在最前
+                panel.level = .screenSaver
+                
+                // 对于某些特殊情况，尝试暂时改变并恢复窗口级别，强制刷新显示
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                    let originalLevel = panel.level
+                    panel.level = .statusBar
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                        panel.level = originalLevel
+                        panel.orderFrontRegardless()
+                    }
+                }
             }
         }
     }
@@ -242,8 +296,8 @@ class PomodoroTimer: ObservableObject {
             self.timer = nil
             
             // 隐藏所有休息窗口
-            for window in self.breakWindows {
-                window.orderOut(nil)
+            for panel in self.breakPanels {
+                panel.orderOut(nil)
             }
             
             self.isBreakTime = false
@@ -251,43 +305,81 @@ class PomodoroTimer: ObservableObject {
             
             // 恢复系统可以休眠
             self.allowSleep()
-            
-            // 注意：用户手动结束休息时不播放提示音
         }
     }
     
-    // 添加带参数的dismissBreakScreen方法
-    func dismissBreakScreen(_ startNewPomodoro: Bool) {
-        if startNewPomodoro {
-            endBreakAndStartNewPomodoro()
-        } else {
-            dismissBreakScreen()
-        }
-    }
-    
-    // 结束休息并开始新的番茄工作周期
+    // 结束休息并开始新的番茄钟周期
     func endBreakAndStartNewPomodoro() {
-        DispatchQueue.main.async {
-            // 确保先停止任何可能正在运行的计时器
-            self.timer?.invalidate()
-            self.timer = nil
+        // 结束休息模式
+        dismissBreakScreen()
+        
+        // 确保设置为工作模式
+        isBreakTime = false
+        resetTimer()
+        
+        // 开始新的番茄钟
+        start()
+    }
+
+    // 添加空间切换监听 - 增强处理逻辑
+    private func setupSpaceChangeMonitoring() {
+        spaceChangeObserver = NotificationCenter.default.addObserver(
+            forName: NSWorkspace.activeSpaceDidChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self = self, self.isBreakTime else { return }
             
-            // 隐藏所有休息窗口
-            for window in self.breakWindows {
-                window.orderOut(nil)
+            // 更积极地多次尝试显示窗口，以便在各种场景下都能保证显示
+            // 立即尝试一次
+            self.showBreakWindow()
+            
+            // 延迟短暂时间再次尝试，配合系统动画
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self.showBreakWindow()
+                
+                // 如果刚从Mission Control退出，额外再尝试一次
+                if self.isInMissionControl {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        self.showBreakWindow()
+                        self.isInMissionControl = false
+                    }
+                }
             }
+        }
+    }
+    
+    // 添加Mission Control状态监听
+    private func setupMissionControlMonitoring() {
+        // 我们可以通过监测特定通知或系统状态来检测Mission Control的激活
+        // 由于macOS没有直接的Mission Control通知，使用一个通用解决方案
+        
+        // 使用工作区通知作为替代方案
+        missionControlObserver = NotificationCenter.default.addObserver(
+            forName: NSApplication.didChangeScreenParametersNotification,
+            object: nil, 
+            queue: .main
+        ) { [weak self] _ in
+            guard let self = self, self.isBreakTime else { return }
             
-            self.isBreakTime = false
-            self.resetTimer()
+            // 标记可能处于Mission Control状态
+            self.isInMissionControl = true
             
-            // 恢复系统可以休眠
-            self.allowSleep()
+            // 在可能退出Mission Control时主动尝试显示窗口
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.showBreakWindow()
+            }
+        }
+        
+        // 添加鼠标移动监视，在用户移动鼠标时可能是从Mission Control返回
+        NSEvent.addGlobalMonitorForEvents(matching: .mouseMoved) { [weak self] _ in
+            guard let self = self, 
+                  self.isBreakTime, 
+                  self.isInMissionControl else { return }
             
-            // 注意：用户点击"继续番茄计时"时不播放提示音
-            
-            // 使用延迟确保前一个计时器完全停止
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                self.start() // 立即开始新的番茄工作周期
+            // 延迟执行，避免频繁调用
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                self.showBreakWindow()
             }
         }
     }
@@ -394,10 +486,10 @@ class PomodoroTimer: ObservableObject {
             guard let self = self, self.isBreakTime else { return event }
             
             if event.keyCode == 53 { // Esc键
-                self.dismissBreakScreen(false)
+                self.dismissBreakScreen()
                 return nil // 消耗此事件
             } else if event.keyCode == 36 { // Enter键
-                self.dismissBreakScreen(true)
+                self.dismissBreakScreen()
                 return nil // 消耗此事件
             }
             return event
@@ -480,7 +572,7 @@ class PomodoroTimer: ObservableObject {
 
     // 设置通知响应处理
     private func setupNotificationResponseHandling() {
-        UNUserNotificationCenter.current().delegate = NotificationDelegate.shared
+        UNUserNotificationCenter.current().delegate = PomodoroNotificationDelegate.shared
     }
 
     func timeString(_ seconds: Int) -> String {
@@ -518,13 +610,6 @@ class PomodoroTimer: ObservableObject {
                 print("无法恢复系统休眠")
             }
         }
-    }
-    
-    deinit {
-        // 移除通知监听
-        NotificationCenter.default.removeObserver(self)
-        // 确保释放休眠断言
-        allowSleep()
     }
 }
 
@@ -684,6 +769,36 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         return false // 关闭窗口后应用继续在后台运行
+    }
+}
+
+// 修改类名避免重复声明
+class PomodoroNotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
+    static let shared = PomodoroNotificationDelegate()
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, 
+                               didReceive response: UNNotificationResponse, 
+                               withCompletionHandler completionHandler: @escaping () -> Void) {
+        let identifier = response.actionIdentifier
+        
+        if identifier == "START_POMODORO" {
+            // 用户选择了开始新的番茄周期
+            DispatchQueue.main.async {
+                sharedPomodoroTimer.stop()
+                sharedPomodoroTimer.isBreakTime = false
+                sharedPomodoroTimer.start()
+            }
+        }
+        // "LATER" 操作不需要特别处理，因为它只是关闭通知
+        
+        completionHandler()
+    }
+    
+    // 允许在应用在前台时显示通知
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                              willPresent notification: UNNotification,
+                              withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.banner, .sound])
     }
 }
 
