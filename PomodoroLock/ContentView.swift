@@ -310,15 +310,41 @@ class PomodoroTimer: ObservableObject {
     
     // 结束休息并开始新的番茄钟周期
     func endBreakAndStartNewPomodoro() {
-        // 结束休息模式
-        dismissBreakScreen()
-        
-        // 确保设置为工作模式
+        // 先设置为工作模式
         isBreakTime = false
-        resetTimer()
         
-        // 开始新的番茄钟
-        start()
+        // 重置计时器时间
+        timeRemaining = workDuration
+        
+        // 隐藏所有休息窗口
+        for panel in breakPanels {
+            panel.orderOut(nil)
+        }
+        
+        // 恢复系统可以休眠
+        allowSleep()
+        
+        // 显式设置isRunning为true
+        isRunning = true
+        
+        // 确保先停止任何可能正在运行的计时器
+        timer?.invalidate()
+        
+        // 创建新的计时器
+        let newTimer = Timer(timeInterval: 1.0, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            if self.timeRemaining > 0 {
+                self.timeRemaining -= 1
+                self.updateMenuBar()
+            } else {
+                self.switchMode()
+            }
+        }
+        RunLoop.main.add(newTimer, forMode: .common)
+        timer = newTimer
+        
+        // 更新菜单栏
+        updateMenuBar()
     }
 
     // 添加空间切换监听 - 增强处理逻辑
