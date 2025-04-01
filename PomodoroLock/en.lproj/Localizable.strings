@@ -35,3 +35,15 @@
 "pause_timer" = "Pause Timer";
 "stop_timer" = "Stop Timer";
 "quit" = "Quit";
+
+/* Menu item to show about window */
+"about" = "About PomodoroLock";
+
+/* About window title */
+"about_title" = "About PomodoroLock";
+
+/* Version format */
+"version_format" = "Version %@ (Build %@)";
+
+/* App description */
+"about_description" = "PomodoroLock is a simple and effective Pomodoro Timer application that helps you improve productivity and focus by managing work and break time efficiently.";

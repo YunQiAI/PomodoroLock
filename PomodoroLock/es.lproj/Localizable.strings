@@ -35,3 +35,15 @@
 "pause_timer" = "Pausar temporizador";
 "stop_timer" = "Detener temporizador";
 "quit" = "Salir";
+
+/* Menu item to show about window */
+"about" = "Acerca de PomodoroLock";
+
+/* About window title */
+"about_title" = "Acerca de PomodoroLock";
+
+/* Version format */
+"version_format" = "Versión %@ (Compilación %@)";
+
+/* App description */
+"about_description" = "PomodoroLock es una aplicación de temporizador Pomodoro simple y eficaz que te ayuda a mejorar la productividad y la concentración gestionando eficientemente el tiempo de trabajo y descanso.";

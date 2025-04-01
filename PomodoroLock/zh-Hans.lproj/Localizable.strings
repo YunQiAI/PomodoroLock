@@ -37,3 +37,15 @@
 
 /* Menu item to enter break mode */
 "enter_break_mode" = "进入休息模式";
+
+/* Menu item to show about window */
+"about" = "关于 PomodoroLock";
+
+/* About window title */
+"about_title" = "关于 PomodoroLock";
+
+/* Version format */
+"version_format" = "版本 %@ (构建 %@)";
+
+/* App description */
+"about_description" = "PomodoroLock 是一个简单高效的番茄工作法应用，帮助你提高工作效率和专注度，合理安排工作和休息时间。";

@@ -35,3 +35,15 @@
 "pause_timer" = "Mettre en pause le minuteur";
 "stop_timer" = "Arrêter le minuteur";
 "quit" = "Quitter";
+
+/* Menu item to show about window */
+"about" = "À propos de PomodoroLock";
+
+/* About window title */
+"about_title" = "À propos de PomodoroLock";
+
+/* Version format */
+"version_format" = "Version %@ (Build %@)";
+
+/* App description */
+"about_description" = "PomodoroLock est une application de minuteur Pomodoro simple et efficace qui vous aide à améliorer votre productivité et votre concentration en gérant efficacement le temps de travail et de pause.";

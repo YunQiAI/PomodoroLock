@@ -35,3 +35,15 @@
 "pause_timer" = "타이머 일시 중지";
 "stop_timer" = "타이머 중지";
 "quit" = "종료";
+
+/* Menu item to show about window */
+"about" = "PomodoroLock 정보";
+
+/* About window title */
+"about_title" = "PomodoroLock 정보";
+
+/* Version format */
+"version_format" = "버전 %@ (빌드 %@)";
+
+/* App description */
+"about_description" = "PomodoroLock는 작업 및 휴식 시간을 효율적으로 관리하여 생산성과 집중력을 향상시키는 간단하고 효과적인 포모도로 타이머 애플리케이션입니다.";

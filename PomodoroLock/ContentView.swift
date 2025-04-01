@@ -451,6 +451,13 @@ class PomodoroTimer: ObservableObject {
         openMainItem.target = self
         menu.addItem(openMainItem)
         
+        // 添加"关于"菜单项
+        let aboutItem = NSMenuItem(title: NSLocalizedString("about", comment: "Menu item to show about window"),
+                                  action: #selector(showAboutWindow),
+                                  keyEquivalent: "")
+        aboutItem.target = self
+        menu.addItem(aboutItem)
+        
         menu.addItem(NSMenuItem.separator())
         
         // 开始/暂停计时
@@ -520,6 +527,51 @@ class PomodoroTimer: ObservableObject {
     // 添加缺失的quitApp方法
     @objc private func quitApp() {
         NSApp.terminate(nil)
+    }
+    
+    @objc private func showAboutWindow() {
+        // 创建"关于"窗口
+        let aboutWindow = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 400, height: 280),
+            styleMask: [.titled, .closable],
+            backing: .buffered,
+            defer: false
+        )
+        aboutWindow.title = NSLocalizedString("about_title", comment: "About window title")
+        aboutWindow.center()
+        
+        // 获取应用版本信息
+        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
+        let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
+        
+        // 创建关于窗口内容
+        let aboutView = NSHostingController(rootView: 
+            VStack(spacing: 20) {
+                Image("AppIcon") // 使用应用图标
+                    .resizable()
+                    .frame(width: 128, height: 128)
+                
+                Text("PomodoroLock")
+                    .font(.title)
+                    .bold()
+                
+                Text(String(format: NSLocalizedString("version_format", comment: "Version format"), appVersion, buildNumber))
+                    .font(.subheadline)
+                
+                Text(NSLocalizedString("about_description", comment: "App description"))
+                    .font(.body)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+                
+                Text("© 2025 YunQiAI")
+                    .font(.caption)
+            }
+            .padding()
+        )
+        
+        aboutWindow.contentViewController = aboutView
+        aboutWindow.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
     }
     
     private func setupKeyboardMonitoring() {
@@ -613,7 +665,7 @@ class PomodoroTimer: ObservableObject {
 
     // 设置通知响应处理
     private func setupNotificationResponseHandling() {
-        UNUserNotificationCenter.current().delegate = PomodoroNotificationDelegate.shared
+        UNUserNotificationCenter.current().delegate = NotificationDelegate.shared
     }
 
     func timeString(_ seconds: Int) -> String {
@@ -808,40 +860,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         mainWindow = window
     }
     
+    // 处理Dock图标点击事件
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        if !flag {
+            createOrShowMainWindow()
+        }
+        return true
+    }
+    
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         return false // 关闭窗口后应用继续在后台运行
     }
 }
 
-// 修改类名避免重复声明
-class PomodoroNotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
-    static let shared = PomodoroNotificationDelegate()
-    
-    func userNotificationCenter(_ center: UNUserNotificationCenter, 
-                               didReceive response: UNNotificationResponse, 
-                               withCompletionHandler completionHandler: @escaping () -> Void) {
-        let identifier = response.actionIdentifier
-        
-        if identifier == "START_POMODORO" {
-            // 用户选择了开始新的番茄周期
-            DispatchQueue.main.async {
-                sharedPomodoroTimer.stop()
-                sharedPomodoroTimer.isBreakTime = false
-                sharedPomodoroTimer.start()
-            }
-        }
-        // "LATER" 操作不需要特别处理，因为它只是关闭通知
-        
-        completionHandler()
-    }
-    
-    // 允许在应用在前台时显示通知
-    func userNotificationCenter(_ center: UNUserNotificationCenter,
-                              willPresent notification: UNNotification,
-                              withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        completionHandler([.banner, .sound])
-    }
-}
+// 删除这里重复的PomodoroNotificationDelegate类，使用NotificationDelegate.swift文件中的实现
 
 @main
 struct PomodoroLockApp: App {
