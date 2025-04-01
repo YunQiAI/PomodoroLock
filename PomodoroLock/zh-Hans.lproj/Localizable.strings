@@ -21,7 +21,6 @@
 "work_duration" = "工作时间: ";
 "break_duration" = "休息时间: ";
 "minutes" = "分钟";
-"enter_break_mode" = "立即进入休息模式";
 
 // 休息界面文本
 "break_time_ongoing" = "休息时间 ⏳";
@@ -35,3 +34,6 @@
 "pause_timer" = "暂停计时";
 "stop_timer" = "停止计时";
 "quit" = "退出";
+
+/* Menu item to enter break mode */
+"enter_break_mode" = "进入休息模式";

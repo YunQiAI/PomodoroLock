@@ -469,6 +469,13 @@ class PomodoroTimer: ObservableObject {
         stopItem.target = self
         menu.addItem(stopItem)
         
+        // 添加进入休息模式选项
+        let enterBreakItem = NSMenuItem(title: NSLocalizedString("enter_break_mode", comment: "Menu item to enter break mode"),
+                                      action: #selector(enterBreakModeFromMenu),
+                                      keyEquivalent: "b")
+        enterBreakItem.target = self
+        menu.addItem(enterBreakItem)
+        
         menu.addItem(NSMenuItem.separator())
         
         // 退出应用
@@ -499,6 +506,14 @@ class PomodoroTimer: ObservableObject {
     
     @objc private func stopTimerFromMenu() {
         stop()
+        setupMenuBarMenu() // 更新菜单状态
+    }
+    
+    // 从菜单栏进入休息模式
+    @objc private func enterBreakModeFromMenu() {
+        // 确保停止当前计时器并进入休息模式
+        pause()
+        startBreakManually()
         setupMenuBarMenu() // 更新菜单状态
     }
     
