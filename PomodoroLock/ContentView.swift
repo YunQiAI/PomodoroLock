@@ -451,13 +451,6 @@ class PomodoroTimer: ObservableObject {
         openMainItem.target = self
         menu.addItem(openMainItem)
         
-        // 添加"关于"菜单项
-        let aboutItem = NSMenuItem(title: NSLocalizedString("about", comment: "Menu item to show about window"),
-                                  action: #selector(showAboutWindow),
-                                  keyEquivalent: "")
-        aboutItem.target = self
-        menu.addItem(aboutItem)
-        
         menu.addItem(NSMenuItem.separator())
         
         // 开始/暂停计时
@@ -528,52 +521,7 @@ class PomodoroTimer: ObservableObject {
     @objc private func quitApp() {
         NSApp.terminate(nil)
     }
-    
-    @objc private func showAboutWindow() {
-        // 创建"关于"窗口
-        let aboutWindow = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 400, height: 280),
-            styleMask: [.titled, .closable],
-            backing: .buffered,
-            defer: false
-        )
-        aboutWindow.title = NSLocalizedString("about_title", comment: "About window title")
-        aboutWindow.center()
-        
-        // 获取应用版本信息
-        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
-        let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
-        
-        // 创建关于窗口内容
-        let aboutView = NSHostingController(rootView: 
-            VStack(spacing: 20) {
-                Image("AppIcon") // 使用应用图标
-                    .resizable()
-                    .frame(width: 128, height: 128)
-                
-                Text("PomodoroLock")
-                    .font(.title)
-                    .bold()
-                
-                Text(String(format: NSLocalizedString("version_format", comment: "Version format"), appVersion, buildNumber))
-                    .font(.subheadline)
-                
-                Text(NSLocalizedString("about_description", comment: "App description"))
-                    .font(.body)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal)
-                
-                Text("© 2025 YunQiAI")
-                    .font(.caption)
-            }
-            .padding()
-        )
-        
-        aboutWindow.contentViewController = aboutView
-        aboutWindow.makeKeyAndOrderFront(nil)
-        NSApp.activate(ignoringOtherApps: true)
-    }
-    
+
     private func setupKeyboardMonitoring() {
         NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
             guard let self = self, self.isBreakTime else { return event }
